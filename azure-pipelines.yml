@@ -22,8 +22,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      git config --global user.email "eusandivares@bi4all.pt"
-            git config --global user.name "eubi4all"
-            git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+      git config --global user.email 'eusandivares@bi4all.pt'
+            git config --global user.name 'eubi4all'
+            git branch -r | grep -v '\->' | while read remote; do git branch --track '${remote#origin/}' '$remote'; done
             git remote add vsts https://dev.azure.com/eusandivares/pbicoe/_git/GithubSync
-            git branch -r | grep -v '\->' | while read remote; do git -c http.extraheader="AUTHORIZATION: bearer $(system_accesstoken)" push -u vsts "${remote#origin/}"; done
+            git branch -r | grep -v '\->' | while read remote; do git -c http.extraheader='AUTHORIZATION: bearer $(system_accesstoken)' push -u vsts '${remote#origin/}'; done
