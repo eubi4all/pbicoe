@@ -4,13 +4,25 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  branches:
+    include:
+    - '*'
+variables:
+  system_accesstoken: $(System.AccessToken)
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
-- bash: git push --prune https://github.com/eubi4all/pbicoe.git \
-        +refs/remotes/origin/*:refs/heads/* +refs/tags/*:refs/tags/*
-  displayName: 'Copy to Github'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+- checkout: self
+  persistCredentials: true    #Allow scripts to access the system token
+  clean: true 
+
+- task: shellexec@0
+  inputs:
+    code: |
+      git config --global user.email "xx@xx.com"
+      git config --global user.name "xxx"
+      git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+      git remote add vsts https://xxx.visualstudio.com/GithubSync/_git/GithubSync
+      git branch -r | grep -v '\->' | while read remote; do git -c http.extraheader="AUTHORIZATION: bearer $(system_accesstoken)" push -u vsts "${remote#origin/}"; done
